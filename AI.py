@@ -110,8 +110,6 @@ elif section == "Visualizations":
 
          "SO2 Distribution",
 
-         "Hourly AQI Trends",
-
          "CO vs O3 Scatter Plot",
 
          "Pollutant Violin Plots"))
@@ -169,18 +167,7 @@ elif section == "Visualizations":
 
         
 
-    elif viz_option == "AQI Distribution by Hour":
-
-        df['Hour'] = pd.to_datetime(df['Date']).dt.hour
-
-        fig9 = px.box(df, x='Hour', y='AQI', 
-
-                     title='AQI Distribution by Hour of Day',
-
-                     color='Hour')
-
-        st.plotly_chart(fig9, use_container_width=True)
-
+   
         
 
     elif viz_option == "Pollutant Violin Plots":
