@@ -40,7 +40,7 @@ def load_data():
 
     df = pd.read_csv("Air_Quality.csv")
 
-    df.drop(columns=['CO2', 'City'], inplace=True)
+    df.drop(columns=['CO2','Date', 'City'], inplace=True)
 
     df.fillna(method='ffill', inplace=True)
 
@@ -112,8 +112,6 @@ elif section == "Visualizations":
 
          "Hourly AQI Trends",
 
-         "Pollutant Trends Over Time",
-
          "CO vs O3 Scatter Plot",
 
          "Pollutant Violin Plots"))
@@ -155,27 +153,6 @@ elif section == "Visualizations":
 
         
 
-    elif viz_option == "Pollutant Trends Over Time":
-
-        # Convert to datetime and set as index
-
-        df['Date'] = pd.to_datetime(df['Date'])
-
-        df.set_index('Date', inplace=True)
-
-        pollutants = ['CO', 'NO2', 'SO2', 'O3', 'PM2.5', 'PM10']
-
-        selected_pollutants = st.multiselect('Select pollutants to plot:', pollutants, default=['PM2.5', 'O3'])
-
-        
-
-        if selected_pollutants:
-
-            fig6 = px.line(df[selected_pollutants].resample('D').mean(), 
-
-                          title='Daily Average Pollutant Levels Over Time')
-
-            st.plotly_chart(fig6, use_container_width=True)
         
 
     elif viz_option == "CO vs O3 Scatter Plot":
