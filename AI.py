@@ -40,7 +40,7 @@ def load_data():
 
     df = pd.read_csv("Air_Quality.csv")
 
-    df.drop(columns=['CO2', 'Date', 'City'], inplace=True)
+    df.drop(columns=['CO2', 'City'], inplace=True)
 
     df.fillna(method='ffill', inplace=True)
 
