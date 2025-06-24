@@ -116,8 +116,6 @@ elif section == "Visualizations":
 
          "CO vs O3 Scatter Plot",
 
-         "AQI Distribution by Hour",
-
          "Pollutant Violin Plots"))
 
 
@@ -154,23 +152,6 @@ elif section == "Visualizations":
 
         
 
-    elif viz_option == "Hourly AQI Trends":
-
-        # Extract hour from datetime
-
-        df['Hour'] = pd.to_datetime(df['Date']).dt.hour
-
-        hourly_avg = df.groupby('Hour')['AQI'].mean().reset_index()
-
-        fig5 = px.line(hourly_avg, x='Hour', y='AQI', 
-
-                      title='Average AQI by Hour of Day',
-
-                      markers=True)
-
-        fig5.update_layout(xaxis_title="Hour of Day", yaxis_title="Average AQI")
-
-        st.plotly_chart(fig5, use_container_width=True)
 
         
 
