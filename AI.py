@@ -114,8 +114,6 @@ elif section == "Visualizations":
 
          "Pollutant Trends Over Time",
 
-         "PM2.5 vs PM10 Relationship",
-
          "CO vs O3 Scatter Plot",
 
          "AQI Distribution by Hour",
@@ -197,19 +195,6 @@ elif section == "Visualizations":
                           title='Daily Average Pollutant Levels Over Time')
 
             st.plotly_chart(fig6, use_container_width=True)
-
-        
-
-    elif viz_option == "PM2.5 vs PM10 Relationship":
-
-        fig7 = px.scatter(df, x='PM2.5', y='PM10', color='AQI_Category',
-
-                         title='Relationship Between PM2.5 and PM10',
-
-                         trendline="ols")
-
-        st.plotly_chart(fig7, use_container_width=True)
-
         
 
     elif viz_option == "CO vs O3 Scatter Plot":
