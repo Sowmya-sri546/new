@@ -18,7 +18,7 @@ st.set_page_config(page_title="Air Quality Dashboard", layout="wide")
 @st.cache_data
 
 def load_data():
-    df = pd.read_csv("Air_Quality.csv")
+    df = pd.read_csv("/mnt/data/Air_Quality.csv")
     df.drop(columns=['CO2', 'Date', 'City'], inplace=True)
     df.fillna(method='ffill', inplace=True)
     df['AQI_Category'] = (df['AQI'] > 100).astype(int)
@@ -51,7 +51,16 @@ if section == "Data Overview":
 elif section == "Visualizations":
     st.subheader("📊 Visualization Section")
     viz_option = st.sidebar.selectbox("Choose a visualization:",
-        ("AQI Category Distribution", "Feature Correlation Heatmap", "NO2 vs PM2.5", "SO2 Distribution"))
+        ("AQI Category Distribution", 
+         "Feature Correlation Heatmap", 
+         "NO2 vs PM2.5", 
+         "SO2 Distribution",
+         "Hourly AQI Trends",
+         "Pollutant Trends Over Time",
+         "PM2.5 vs PM10 Relationship",
+         "CO vs O3 Scatter Plot",
+         "AQI Distribution by Hour",
+         "Pollutant Violin Plots"))
 
     if viz_option == "AQI Category Distribution":
         fig1 = px.pie(df, names='AQI_Category', title='Good vs Poor Air Quality')
@@ -68,7 +77,57 @@ elif section == "Visualizations":
     elif viz_option == "SO2 Distribution":
         fig4 = px.histogram(df, x='SO2', color='AQI_Category', nbins=40)
         st.plotly_chart(fig4, use_container_width=True)
-
+        
+    elif viz_option == "Hourly AQI Trends":
+        # Extract hour from datetime
+        df['Hour'] = pd.to_datetime(df['Date']).dt.hour
+        hourly_avg = df.groupby('Hour')['AQI'].mean().reset_index()
+        fig5 = px.line(hourly_avg, x='Hour', y='AQI', 
+                      title='Average AQI by Hour of Day',
+                      markers=True)
+        fig5.update_layout(xaxis_title="Hour of Day", yaxis_title="Average AQI")
+        st.plotly_chart(fig5, use_container_width=True)
+        
+    elif viz_option == "Pollutant Trends Over Time":
+        # Convert to datetime and set as index
+        df['Date'] = pd.to_datetime(df['Date'])
+        df.set_index('Date', inplace=True)
+        pollutants = ['CO', 'NO2', 'SO2', 'O3', 'PM2.5', 'PM10']
+        selected_pollutants = st.multiselect('Select pollutants to plot:', pollutants, default=['PM2.5', 'O3'])
+        
+        if selected_pollutants:
+            fig6 = px.line(df[selected_pollutants].resample('D').mean(), 
+                          title='Daily Average Pollutant Levels Over Time')
+            st.plotly_chart(fig6, use_container_width=True)
+        
+    elif viz_option == "PM2.5 vs PM10 Relationship":
+        fig7 = px.scatter(df, x='PM2.5', y='PM10', color='AQI_Category',
+                         title='Relationship Between PM2.5 and PM10',
+                         trendline="ols")
+        st.plotly_chart(fig7, use_container_width=True)
+        
+    elif viz_option == "CO vs O3 Scatter Plot":
+        fig8 = px.scatter(df, x='CO', y='O3', color='AQI_Category',
+                         title='CO vs O3 Levels',
+                         marginal_x="histogram", 
+                         marginal_y="histogram")
+        st.plotly_chart(fig8, use_container_width=True)
+        
+    elif viz_option == "AQI Distribution by Hour":
+        df['Hour'] = pd.to_datetime(df['Date']).dt.hour
+        fig9 = px.box(df, x='Hour', y='AQI', 
+                     title='AQI Distribution by Hour of Day',
+                     color='Hour')
+        st.plotly_chart(fig9, use_container_width=True)
+        
+    elif viz_option == "Pollutant Violin Plots":
+        pollutants = ['CO', 'NO2', 'SO2', 'O3', 'PM2.5', 'PM10']
+        selected_pollutant = st.selectbox('Select pollutant:', pollutants)
+        
+        fig10 = px.violin(df, y=selected_pollutant, box=True, 
+                         points="all",
+                         title=f'Distribution of {selected_pollutant} Levels')
+        st.plotly_chart(fig10, use_container_width=True)
 elif section == "Model: Logistic Regression":
     st.subheader("📈 Logistic Regression")
     model = LogisticRegression(max_iter=1000)
